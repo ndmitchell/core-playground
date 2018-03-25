@@ -4,7 +4,7 @@
 module Language.Core.Type(
     Module(..),
     Var(..), Con(..), Exp(..), Pat(..),
-    fromModule2, fromDecl, fromExp, toModule, toDecl, toExp
+    toModuleHSE, fromModuleHSE, toExpHSE, fromExpHSE
     )  where
 
 import Data.Data
@@ -64,17 +64,24 @@ instance Show Exp where
 
 instance Read Module where
     readsPrec _ s = [(f s, "")]
-        where f = fromModule2 . deflate . fromParseResult . parseModule
+        where f = fromModuleHSE . fromParseResult . parseModule
 
 instance Show Module where
-    show = prettyPrint . deflate . toModule
+    show = prettyPrint . toModuleHSE
 
 
 ---------------------------------------------------------------------
--- FROM 
+-- FROM/TO HSE
 
-fromModule2 :: H.Module S -> Module
-fromModule2 (H.Module _ _ _ _ xs) = Module $ concatMap fromDecl xs
+fromExpHSE :: H.Exp S -> Exp
+fromExpHSE = fromExp . deflate
+
+toExpHSE :: Exp -> H.Exp H.SrcSpanInfo
+toExpHSE = inflate . toExp
+
+
+fromModuleHSE :: H.Module S -> Module
+fromModuleHSE (deflate -> H.Module _ _ _ _ xs) = Module $ concatMap fromDecl xs
 
 fromDecl :: Decl S -> [(Var,Exp)]
 fromDecl (PatBind _ (PVar _ f) (UnGuardedRhs _ x) Nothing) = [(V $ fromName f, fromExp x)]
@@ -121,8 +128,8 @@ fromPatVar x = error $ "Unhandled fromPatVar: " ++ show x
 ---------------------------------------------------------------------
 -- TO 
 
-toModule :: Module -> H.Module H.SrcSpanInfo
-toModule = H.Module s Nothing [] [] . map (uncurry toDecl) . fromModule
+toModuleHSE :: Module -> H.Module H.SrcSpanInfo
+toModuleHSE = inflate . H.Module s Nothing [] [] . map (uncurry toDecl) . fromModule
 
 toDecl :: Var -> Exp -> Decl S
 toDecl (V f) x = PatBind s (PVar s $ toName f) (UnGuardedRhs s $ toExp x) Nothing
