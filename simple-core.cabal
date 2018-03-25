@@ -26,29 +26,17 @@ source-repository head
 
 library
     build-depends:
-        base == 4.*, filepath, directory, deepseq,
-        transformers, exceptions,
+        base == 4.*,
+        deepseq,
+        transformers,
         uniplate, extra,
         haskell-src-exts
     hs-source-dirs:     src
     exposed-modules:
-        Proof.QED
-        Proof.QED.Internal
+        Language.Core
     other-modules:
-        Paths_qed
-        Proof.Exp.Core
-        Proof.Exp.HSE
-        Proof.Exp.Prop
-        Proof.QED.Trusted
-        Proof.QED.Type
-        Proof.Util
-
-test-suite qed-test
-    type: exitcode-stdio-1.0
-    main-is: Main.hs
-    build-depends: base, qed, transformers
-    hs-source-dirs: test
-
-    other-modules:
-        Classes
-        HLint
+        Language.Core.HSE
+        Language.Core.Simplify
+        Language.Core.Operations
+        Language.Core.Type
+        Language.Core.Variables

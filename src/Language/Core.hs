@@ -3,13 +3,15 @@
 -- | Module for defining and manipulating expressions.
 module Language.Core(
     -- * Core data type
-    module X,
+    Module(..),
+    Var(..), Con(..), Exp(..), Pat(..),
+    -- * Operations
+    module Language.Core.Operations,
     -- * Free variable untilities
     module Language.Core.Variables,
     -- * Simplification
     module Language.Core.Simplify,
     -- * Parsing files
-    H.ParseResult(..),
     parseCoreFile,
     -- * Conversion to\/from HSE
     fromModuleHSE, fromDeclHSE, fromExpHSE,
@@ -17,10 +19,10 @@ module Language.Core(
     ) where
 
 import Language.Core.HSE
-import Language.Core.Type as X hiding (toExp, toDecl, toModule, fromModule2, fromDecl, fromExp)
 import Language.Core.Type
 import Language.Core.Variables
 import Language.Core.Simplify
+import Language.Core.Operations
 import qualified Language.Haskell.Exts as H
 
 

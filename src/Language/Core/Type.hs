@@ -2,12 +2,8 @@
 
 -- | Module for defining and manipulating expressions.
 module Language.Core.Type(
-    Module(..), modLookup,
+    Module(..),
     Var(..), Con(..), Exp(..), Pat(..),
-    isVar, isCon, isApp, isLet, isLetRec, isLam, isCase,
-    isPCon, isPWild,
-    fromApps, fromLets, fromLams,
-    mkApps, mkLets, mkLams,
     fromModule2, fromDecl, fromExp, toModule, toDecl, toExp
     )  where
 
@@ -45,9 +41,6 @@ data Pat
 newtype Module = Module {fromModule :: [(Var, Exp)]}
     deriving (Data,Typeable,Eq,Ord,NFData,Semigroup,Monoid)
 
-modLookup :: Module -> Var -> Maybe Exp
-modLookup m x = lookup x $ fromModule m
-
 instance NFData Exp where
     rnf (Var a) = rnf a
     rnf (Con a) = rnf a
@@ -75,49 +68,6 @@ instance Read Module where
 
 instance Show Module where
     show = prettyPrint . deflate . toModule
-
----------------------------------------------------------------------
--- SIMPLE OPERATIONS
-
-isVar, isCon, isApp, isLet, isLetRec, isLam, isCase :: Exp -> Bool
-isVar Var{} = True; isVar _ = False
-isCon Con{} = True; isCon _ = False
-isApp App{} = True; isApp _ = False
-isLet Let{} = True; isLet _ = False
-isLetRec LetRec{} = True; isLetRec _ = False
-isLam Lam{} = True; isLam _ = False
-isCase Case{} = True; isCase _ = False
-
-isPCon, isPWild :: Pat -> Bool
-isPCon PCon{} = True; isPCon _ = False
-isPWild PWild{} = True; isPWild _ = False
-
-fromApps :: Exp -> (Exp, [Exp])
-fromApps (App x y) = (a, b ++ [y])
-    where (a,b) = fromApps x
-fromApps x = (x,[])
-
-mkApps :: Exp -> [Exp] -> Exp
-mkApps x (y:ys) = mkApps (App x y) ys
-mkApps x [] = x
-
-fromLams :: Exp -> ([Var], Exp)
-fromLams (Lam x y) = (x:a, b)
-    where (a,b) = fromLams y
-fromLams x = ([], x)
-
-mkLams :: [Var] -> Exp -> Exp
-mkLams (y:ys) x = Lam y $ mkLams ys x
-mkLams [] x = x
-
-fromLets :: Exp -> ([(Var, Exp)], Exp)
-fromLets (Let x y z) = ((x,y):a, b)
-    where (a,b) = fromLets z
-fromLets x = ([], x)
-
-mkLets :: [(Var, Exp)] -> Exp -> Exp
-mkLets [] x = x
-mkLets ((a,b):ys) x = Let a b $ mkLets ys x
 
 
 ---------------------------------------------------------------------

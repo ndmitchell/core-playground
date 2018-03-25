@@ -10,6 +10,7 @@ import Data.List
 import Data.Generics.Uniplate.Data
 import Language.Core.Type
 import Language.Core.Variables
+import Language.Core.Operations
 
 
 caseCon :: Exp -> Maybe ([(Var,Exp)], Exp)
