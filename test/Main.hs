@@ -29,7 +29,6 @@ unwild _ = Nothing
 
 hack :: Exp -> Exp
 hack (Let a b x) = transform hack $ subst [(a,b)] x
-hack (LetRec bs x) = transform hack $ subst bs x
 hack (Case x [(PCon a1 a2,a3),(PWild,b3)]) | Just b12 <- unwild $ fromCon a1 = hack $ Case x [(PCon a1 a2,a3),(b12,b3)]
 hack (Case x ps@[(PCon _ a, _), (PCon _ b, _)]) | length a > length b = Case x $ reverse ps
 hack x = x

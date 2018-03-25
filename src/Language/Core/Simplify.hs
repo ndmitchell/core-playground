@@ -29,6 +29,10 @@ simplify = fs . relabel
         f o@(Case (Let v x y) alts) = fs $ Let v x $ Case y alts
         f (App (Lam v x) y) = f $ Let v y x
         f (Let v x y) | cheap x || linear v y = fs $ subst [(v,x)] y
+        f (LetRec []) y = y
+        f (LetRec xs y) | not $ null notRec = f $ LetRec isRec $ mkLets notRec y
+            where used = concatMap (free . fst) xs
+                  (isRec,notRec) = partition (flip elem used . fst) xs
         f o@(Case (Case on alts1) alts2) =  fs $ Case on $ map g alts1
             where g (PWild, c) = (PWild, Case c alts2)
                   g (PCon a vs, c) = (PCon a vs, Case c alts2)
@@ -48,6 +52,7 @@ count :: Var -> Exp -> Int
 count v (Var x) = if v == x then 1 else 0
 count v (Lam w y) = if v == w then 0 else count v y * 2 -- lambda count is infinite, but 2 is close enough
 count v (Let w x y) = count v x + (if v == w then 0 else count v y)
+count v (LetRec xs y) = if v `elem` map fst xs then 0 else sum (map (count v . snd) xs) + count v ys
 count v (Case x alts) = count v x + maximum [if v `elem` varsP p then 0 else count v c | (p,c) <- alts]
 count v (App x y) = count v x + count v y
 count v _ = 0
