@@ -40,13 +40,13 @@ printEq :: Exp -> Exp -> IO ()
 printEq (show -> a) (show -> b)
     | short a, short b = putStrLn $ a ++ "  ===  " ++ b
     | otherwise = putStr $ unlines [a,"  ===",b]
-    where short x = case lines x of [a] -> length a < 30; _ -> False
+    where short x = case lines x of [a] -> length a < 40; _ -> False
 
 equivalent :: Module -> Exp -> Exp -> IO ()
 equivalent m (norm -> a) (norm -> b) = do
-    putStrLn "== EQUIVALENT =="
+    putStrLn "== EQUIVALENT? =="
     f [] [(a,b)]
-    putStrLn "== SUCCESS =="
+    putStrLn "== QED =="
     where
         f done todo = do
             let new = filter (uncurry (/=)) todo \\ done
