@@ -59,7 +59,7 @@ prove m p = do
     putStrLn "== EQUIVALENT? =="
     print p
     f [] [p]
-    putStrLn "== QED =="
+    putStrLn "== QED ==\n"
     where
         f done todo = do
             let new = filter (not . isPropEq) (map simpP todo) \\ done
