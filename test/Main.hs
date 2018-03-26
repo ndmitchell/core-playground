@@ -103,11 +103,16 @@ descendP (Prop vs e1 e2) = f e1 e2
             | v1 == v2
             = Just [Prop (vs++[v1]) x1 x2]
 
-        f (Case x1 as1) (Case x2 as2)
-            | map fst as1 == map fst as2
-            = Just $ Prop vs x1 x2 : zipWith g as1 as2
-            where g (p1@(PCon _ vs2), a1) (p2, a2) = Prop (vs ++ vs2) (mkAlt x1 p1 a1) (mkAlt x2 p2 a2)
-                  g (PWild, x1) (_, x2) = Prop vs x1 x2
+        f (Case s1 as1) (Case s2 as2)
+            | length as1 == length as2
+            = (Prop vs s1 s2 :) <$> zipWithM fAlt as1 as2
+            where
+                fAlt (PWild, x1) (PWild, x2) = Just $ Prop vs x1 x2
+                fAlt (PCon c1 v1, x1) (PCon c2 v2, x2)
+                    | c1 == c2, length v1 == length v2
+                    = Just $ Prop vs (mkLams v1 $ mkAlt s1 (PCon c1 v1) x1)
+                                     (mkLams v2 $ mkAlt s2 (PCon c2 v2) x2)
+                fAlt _ _ = Nothing
 
         f (fromApps -> (x1, x2)) (fromApps -> (y1, y2))
             | x1 == y1 && isVarCon x1
