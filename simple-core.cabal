@@ -1,4 +1,4 @@
-cabal-version:      >= 1.8
+cabal-version:      >= 1.18
 build-type:         Simple
 name:               simple-core
 version:            0.0
@@ -18,19 +18,22 @@ data-files:
 extra-doc-files:
     README.md
     CHANGES.txt
-tested-with:        GHC==7.10.1, GHC==7.8.4
+tested-with:        GHC==8.4.1, GHC==8.2.2, GHC==8.0.2
 
 source-repository head
     type:     git
     location: https://github.com/ndmitchell/simple-core.git
 
 library
+    default-language: Haskell2010
     build-depends:
         base == 4.*,
         deepseq,
         transformers,
-        uniplate, extra,
-        haskell-src-exts
+        containers,
+        uniplate,
+        extra,
+        haskell-src-exts ==1.20.*
     hs-source-dirs:     src
     exposed-modules:
         Language.Core

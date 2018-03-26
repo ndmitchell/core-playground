@@ -1,12 +1,9 @@
-sudo: true
+sudo: required
 env:
- - GHCVER=7.8.4
- - GHCVER=7.10.1
- - GHCVER=head
-
-matrix:
-  allow_failures:
-   - env: GHCVER=head
+- GHCVER=8.0.2
+- GHCVER=8.2.2
+- GHCVER=8.4.1
+- GHCVER=head
 
 script:
- - wget https://raw.github.com/ndmitchell/neil/master/travis.sh -O - --no-check-certificate --quiet | sh
+- curl -sL https://raw.github.com/ndmitchell/neil/master/travis.sh | sh

@@ -1,4 +1,3 @@
 Changelog for simple-core
 
-0.0
     Initial version
