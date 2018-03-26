@@ -47,6 +47,7 @@ instance NFData Exp where
     rnf (Con a) = rnf a
     rnf (App a b) = rnf a `seq` rnf b
     rnf (Let a b c) = rnf a `seq` rnf b `seq` rnf c
+    rnf (LetRec a b) = rnf a `seq` rnf b
     rnf (Lam a b) = rnf a `seq` rnf b
     rnf (Case a b) = rnf a `seq` rnf b
 
