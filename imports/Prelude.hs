@@ -610,7 +610,7 @@ asTypeOf         =  const
 
 
 error            :: String -> a
-error            =  primError
+error        x    =  primError -- deliberately don't pass x to error, so different errors are considered equal
 
 -- It is expected that compilers will recognize this and insert error
 -- messages that are more appropriate to the context in which undefined 
