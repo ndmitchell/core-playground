@@ -23,18 +23,16 @@ main = do
 
 -- | Reduce the language we have to deal with, without changing semantics
 simpler :: Module -> Module
-simpler = transformBi f
+simpler = descendBi (simplify . transform f . simplifyAlts ds)
     where
-        f (Let a b x) = transform f $ subst [(a,b)] x
-        f (Case x [(PCon a1 a2,a3),(PWild,b3)]) | Just b12 <- unwild $ fromCon a1 = f $ Case x [(PCon a1 a2,a3),(b12,b3)]
-        f (Case x ps@[(PCon _ a, _), (PCon _ b, _)]) | length a > length b = Case x $ reverse ps
+        f (Let a b x) = subst [(a,b)] x
         f x = x
 
-        unwild "Nothing" = Just $ PCon (C "Just") [V "_magic"]
-        unwild "Just" = Just $ PCon (C "Nothing") []
-        unwild "(:)" = Just $ PCon (C "[]") []
-        unwild "[]" = Just $ PCon (C "(:)") [V "_magic1",V "_magic2"]
-        unwild _ = Nothing
+        ds = [[(C "Nothing",0),(C "Just",1)]
+             ,[(C "[]",0),(C "(:)",2)]
+             ,[(C "LT",0),(C "EQ",0),(C "GT",0)]
+             ]
+
 
 data Prop = Prop [Var] Exp Exp
     deriving Eq

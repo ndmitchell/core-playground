@@ -2,7 +2,7 @@
 
 -- | Module for defining and manipulating expressions.
 module Language.Core.Simplify(
-    simplify
+    simplify, simplifyAlts
     ) where
 
 import Data.Maybe
@@ -60,3 +60,26 @@ count v (LetRec xs y) = if v `elem` map fst xs then 0 else sum (map (count v . s
 count v (Case x alts) = count v x + maximum [if v `elem` varsP p then 0 else count v c | (p,c) <- alts]
 count v (App x y) = count v x + count v y
 count v _ = 0
+
+
+simplifyAlts :: [[(Con, Int)]] -> Exp -> Exp
+simplifyAlts ds = transform f
+    where
+        pcon (PCon c _, _) = Just c
+        pcon _ = Nothing
+
+        f (Case x alts)
+            | csAlt@(c1Alt:_) <- mapMaybe pcon alts
+            , Just d <- findDataType c1Alt
+            , null $ csAlt \\ map fst d -- make sure we don't lose any
+            , Just alts2 <- mapM (findAlt alts) d
+            = Case x alts2
+        f x = x
+
+        findDataType c = listToMaybe $ filter (\cs -> c `elem` map fst cs) ds
+
+        findAlt :: [(Pat, Exp)] -> (Con, Int) -> Maybe (Pat, Exp)
+        findAlt alts (c,i)
+            | alt:_ <- filter ((== Just c) . pcon) alts = Just alt
+            | Just w <- lookup PWild alts = Just (PCon c [V $ "_" ++ show j | j <- [1..i]], w)
+            | otherwise = Nothing
