@@ -11,6 +11,8 @@ import Data.Generics.Uniplate.Data
 import Language.Core.Type
 import Language.Core.Variables
 import Language.Core.Operations
+import Language.Core.Debug
+import Language.Core.Equivalent
 
 
 caseCon :: Exp -> Maybe ([(Var,Exp)], Exp)
@@ -23,7 +25,7 @@ caseCon _ = Nothing
 
 
 simplify :: Exp -> Exp
-simplify = fs . relabel
+simplify = debugAssertEq equivalent (fs . relabel)
     where
         fs = transform f
 
