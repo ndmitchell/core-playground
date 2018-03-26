@@ -21,8 +21,10 @@ import Language.Core.Type
 import Language.Core.Variables
 import Language.Core.Simplify
 import Language.Core.Operations
+import Control.Exception
+import Control.DeepSeq
 import qualified Language.Haskell.Exts as H
 
 
 parseCoreFile :: FilePath -> IO Module
-parseCoreFile file = fromModuleHSE . H.fromParseResult <$> H.parseFile file
+parseCoreFile file = evaluate . force . fromModuleHSE . H.fromParseResult =<< H.parseFile file
