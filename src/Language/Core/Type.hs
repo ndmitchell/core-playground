@@ -1,4 +1,4 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving, DeriveDataTypeable, PatternGuards, TupleSections, ViewPatterns #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving, DeriveDataTypeable, ViewPatterns #-}
 
 -- | Module for defining and manipulating expressions.
 module Language.Core.Type(
@@ -11,7 +11,7 @@ import Data.Data
 import Data.Char
 import Data.Maybe
 import Data.List.Extra
-import Language.Haskell.Exts hiding (Module,Exp,Name,Pat,Var,Let,App,Case,Con,name,parse,Pretty)
+import Language.Haskell.Exts hiding (Module,Exp,Name,Pat,Var,Let,App,Case,Con,Pretty)
 import qualified Language.Haskell.Exts as H
 import Language.Core.HSE
 import Data.Semigroup
@@ -155,4 +155,4 @@ toPat PWild = PWildCard s
 
 toName :: String -> H.Name S
 toName xs@(x:_) | isAlphaNum x || x `elem` "'_(" = Ident s xs
-                   | otherwise = Symbol s xs
+                | otherwise = Symbol s xs

@@ -1,4 +1,4 @@
-{-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE LambdaCase #-}
 
 module Language.Core.Debug(
     debugEnable,
@@ -39,7 +39,7 @@ debugAssertEq by f x = unsafePerformIO $ do
 
 {-# NOINLINE debugTrace #-}
 debugTrace :: Show e => e -> a -> a
-debugTrace e x = unsafePerformIO $ withVar debugRef $ \v -> case v of
+debugTrace e x = unsafePerformIO $ withVar debugRef $ \case
     Nothing -> return x
     Just file -> do
         s <- evaluate $ force $ show e

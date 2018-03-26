@@ -1,4 +1,3 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving, DeriveDataTypeable, PatternGuards, TupleSections, ViewPatterns #-}
 
 -- | Module for defining and manipulating expressions.
 module Language.Core.Operations(
@@ -19,8 +18,7 @@ fromApps (App x y) = (a, b ++ [y])
 fromApps x = (x,[])
 
 mkApps :: Exp -> [Exp] -> Exp
-mkApps x (y:ys) = mkApps (App x y) ys
-mkApps x [] = x
+mkApps = foldl App
 
 fromLams :: Exp -> ([Var], Exp)
 fromLams (Lam x y) = (x:a, b)
@@ -28,8 +26,7 @@ fromLams (Lam x y) = (x:a, b)
 fromLams x = ([], x)
 
 mkLams :: [Var] -> Exp -> Exp
-mkLams (y:ys) x = Lam y $ mkLams ys x
-mkLams [] x = x
+mkLams ys x = foldr Lam x ys
 
 fromLets :: Exp -> ([(Var, Exp)], Exp)
 fromLets (Let x y z) = ((x,y):a, b)

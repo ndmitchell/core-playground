@@ -1,4 +1,4 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving, DeriveDataTypeable, PatternGuards, TupleSections, ViewPatterns #-}
+{-# LANGUAGE ViewPatterns #-}
 
 -- | Module for defining and manipulating expressions.
 module Language.Core.Simplify(
@@ -40,7 +40,7 @@ simplify = debugAssertEq equivalent (fs . relabel)
         f o@(Case (Case on alts1) alts2) =  fs $ Case on $ map g alts1
             where g (PWild, c) = (PWild, Case c alts2)
                   g (PCon a vs, c) = (PCon a vs, Case c alts2)
-        f x | Just ((unzip -> (vs, xs)), bod) <- caseCon x = fs $ mkLets (zip vs xs) bod
+        f x | Just (unzip -> (vs, xs), bod) <- caseCon x = fs $ mkLets (zip vs xs) bod
         f x = x
 
 cheap (Var _) = True

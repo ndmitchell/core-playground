@@ -40,7 +40,7 @@ subst ren e = case e of
     Let a b y -> Let a (f [] b) $ f [a] y
     LetRec xs y -> let f' = f (map fst xs) in LetRec (map (second f') xs) $ f' y
     x -> x
-    where f del x = subst (filter (flip notElem del . fst) ren) x
+    where f del = subst (filter (flip notElem del . fst) ren)
 
 
 relabel :: Exp -> Exp

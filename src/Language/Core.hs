@@ -1,4 +1,3 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving, DeriveDataTypeable, PatternGuards, TupleSections, ViewPatterns #-}
 
 -- | Module for defining and manipulating expressions.
 module Language.Core(
@@ -53,5 +52,5 @@ parseCoreImports :: IO Module
 parseCoreImports = do
     dir <- getDataDir
     files <- filter (not . isPrefixOf ".") <$> getDirectoryContents ("imports/" ++ dir)
-    fmap mconcat $ forM files $ \file -> do
+    fmap mconcat $ forM files $ \file ->
         parseCoreFile $ dir ++ "/imports/" ++ file

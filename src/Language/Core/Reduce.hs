@@ -37,7 +37,7 @@ whnfM ask = f
 whnf :: (Var -> s -> Maybe (s, Exp)) -> Exp -> s -> (Exp, s)
 whnf ask = runState . whnfM f
     where f v = do
-                res <- ask v <$> get
+                res <- gets (ask v)
                 whenJust res $ put . fst
                 return $ fmap snd res
 
