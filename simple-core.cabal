@@ -35,8 +35,11 @@ library
     exposed-modules:
         Language.Core
     other-modules:
+        Language.Core.Debug
+        Language.Core.Equivalent
         Language.Core.HSE
-        Language.Core.Simplify
         Language.Core.Operations
+        Language.Core.Reduce
+        Language.Core.Simplify
         Language.Core.Type
         Language.Core.Variables
