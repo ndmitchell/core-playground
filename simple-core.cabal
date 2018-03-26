@@ -24,6 +24,9 @@ source-repository head
     type:     git
     location: https://github.com/ndmitchell/simple-core.git
 
+data-files:
+    imports/*.hs
+
 library
     default-language: Haskell2010
     build-depends:
@@ -46,3 +49,4 @@ library
         Language.Core.Simplify
         Language.Core.Type
         Language.Core.Variables
+        Paths_simple_core

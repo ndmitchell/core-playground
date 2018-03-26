@@ -1,5 +1,5 @@
 :set -fwarn-unused-binds -fwarn-unused-imports -fwarn-orphans
 :set -isrc -itest
-:load test/Main.hs
+:load demo/QED.hs src/Paths.hs
 
 :def test const $ return ":main"
