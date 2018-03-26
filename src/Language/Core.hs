@@ -51,6 +51,6 @@ parseCoreImport x = do
 parseCoreImports :: IO Module
 parseCoreImports = do
     dir <- getDataDir
-    files <- filter (not . isPrefixOf ".") <$> getDirectoryContents ("imports/" ++ dir)
+    files <- filter (not . isPrefixOf ".") <$> getDirectoryContents (dir ++ "/imports")
     fmap mconcat $ forM files $ \file ->
         parseCoreFile $ dir ++ "/imports/" ++ file
