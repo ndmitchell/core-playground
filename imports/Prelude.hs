@@ -86,12 +86,12 @@ class  (Eq a) => Ord a  where
         -- Minimal complete definition:
         --      (<=) or compare
         -- Using compare can be more efficient for complex types.
-    compare x y = if x == y then EQ else if x <= y then LT else GT
+    compare = primCompare
 
-    x <= y           =  compare x y /= GT
-    x <  y           =  compare x y == LT
-    x >= y           =  compare x y /= LT
-    x >  y           =  compare x y == GT
+    x <= y           =  case compare x y of GT -> False; _ -> True
+    x <  y           =  case compare x y of LT -> True; _ -> False
+    x >= y           =  case compare x y of LT -> False; _ -> True
+    x >  y           =  case compare x y of GT -> True; _ -> False
 
 -- note that (min x y, max x y) = (x,y) or (y,x)
     max x y = if x <= y then y else x
