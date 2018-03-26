@@ -6,7 +6,6 @@ module Language.Core.HSE(deflate, inflate, S, s) where
 import Data.Data
 import Data.List.Extra
 import Language.Haskell.Exts hiding (app)
-import Control.Monad.Trans.State
 import Data.Generics.Uniplate.Data
 
 
@@ -30,7 +29,7 @@ fresh del = ["v" ++ show i | i  <- [1..]] \\ del
 
 -- | Use fewer constructors to express the same program.
 deflate :: Data (f S) => f S -> f S
-deflate = transformBi deflateExp . transformBi deflatePat . transformBi deflateQName . transformBi deflateDecl . deflateWildcard
+deflate = transformBi deflateExp . transformBi deflatePat . transformBi deflateQName . transformBi deflateDecl
 
 spec :: SpecialCon S -> QName S
 spec UnitCon{} = UnQual s $ Ident s "()"
@@ -117,13 +116,6 @@ deflatePat (PInfixApp _ a b c) = PApp s b [a,c]
 deflatePat (PList _ []) = PApp s (spec $ ListCon s) []
 deflatePat (PTuple _ b xs) = PApp s (spec $ TupleCon s b $ length xs) xs
 deflatePat x = x
-
--- removing wildcards needs some state (the unused variables), so has to be monadic
-deflateWildcard :: Data (f S) => f S -> f S
-deflateWildcard x = evalState (transformBiM f x) (["_" ++ show i | i <- [1..]] \\ names x)
-    where f :: Pat S -> State [String] (Pat S)
-          f PWildCard{} = do v:vs <- get; put vs; return $ PVar s $ Ident s v
-          f x = return x
 
 isPVar PVar{} = True; isPVar _ = False
 

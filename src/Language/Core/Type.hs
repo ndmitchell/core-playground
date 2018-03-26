@@ -10,6 +10,7 @@ module Language.Core.Type(
 import Data.Data
 import Data.Char
 import Data.Maybe
+import Data.List.Extra
 import Language.Haskell.Exts hiding (Module,Exp,Name,Pat,Var,Let,App,Case,Con,name,parse,Pretty)
 import qualified Language.Haskell.Exts as H
 import Language.Core.HSE
@@ -115,14 +116,15 @@ fromAlt x = error $ "Unhandled fromAlt: " ++ show x
 
 fromPat :: H.Pat S -> Pat
 fromPat (PParen _ x) = fromPat x
-fromPat (PApp _ (UnQual _ c) xs) = PCon (C $ fromName c) $ map (V . fromPatVar) xs
+fromPat (PApp _ (UnQual _ c) xs) = PCon (C $ fromName c) $ map V $ zipWithFrom fromPatVar 1 xs
 fromPat PWildCard{} = PWild
 fromPat x@PLit{} = PCon (C $ prettyPrint x) []
 fromPat x = error $ "Unhandled fromPat: " ++ show x
 
-fromPatVar :: H.Pat S -> String
-fromPatVar (PVar _ x) = fromName x
-fromPatVar x = error $ "Unhandled fromPatVar: " ++ show x
+fromPatVar :: Int -> H.Pat S -> String
+fromPatVar i (PVar _ x) = fromName x
+fromPatVar i PWildCard{} = "_" ++ show i
+fromPatVar i x = error $ "Unhandled fromPatVar: " ++ show x
 
 
 ---------------------------------------------------------------------
