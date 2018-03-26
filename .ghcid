@@ -1,1 +1,1 @@
--c "ghci -ferror-spans" --test main --reload=qed.hs
+-c "ghci -ferror-spans" --test :test --reload=qed-demo.hs
