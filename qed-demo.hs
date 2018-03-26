@@ -36,6 +36,11 @@ proof13 f x y = map (uncurry f) (zip x y) === zipWith f x y
 -- Results in non-termination trying to prove iterate (id*) = repeat, for increasingly more id's
 -- proof14 = iterate id === repeat
 
+-- We can solve the simpler version though
+proof14a = iterate (\x -> x) === repeat
+-- proof14b = iterate (\x -> x) === iterate id
+
+
 proof15 f x = catMaybes (map f x) === mapMaybe f x
 
 proof16 = concatMap maybeToList === catMaybes
