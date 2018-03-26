@@ -19,13 +19,12 @@ extra-doc-files:
     README.md
     CHANGES.txt
 tested-with:        GHC==8.4.1, GHC==8.2.2, GHC==8.0.2
+data-files:
+    imports/*.hs
 
 source-repository head
     type:     git
     location: https://github.com/ndmitchell/simple-core.git
-
-data-files:
-    imports/*.hs
 
 library
     default-language: Haskell2010
@@ -33,6 +32,7 @@ library
         base == 4.*,
         deepseq,
         transformers,
+        directory,
         containers,
         uniplate,
         extra,
@@ -50,3 +50,12 @@ library
         Language.Core.Type
         Language.Core.Variables
         Paths_simple_core
+
+executable qed
+    default-language:   Haskell2010
+    build-depends:
+        base,
+        simple-core,
+        uniplate,
+        extra
+    main-is:            demo/QED.hs
