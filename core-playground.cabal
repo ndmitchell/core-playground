@@ -1,6 +1,6 @@
 cabal-version:      >= 1.18
 build-type:         Simple
-name:               simple-core
+name:               core-playground
 version:            0.0
 license:            BSD3
 license-file:       LICENSE
@@ -11,8 +11,8 @@ copyright:          Neil Mitchell 2015-2018
 synopsis:           Simple prover
 description:
     A simple core language.
-homepage:           https://github.com/ndmitchell/simple-core#readme
-bug-reports:        https://github.com/ndmitchell/simple-core/issues
+homepage:           https://github.com/ndmitchell/core-playground#readme
+bug-reports:        https://github.com/ndmitchell/core-playground/issues
 data-files:
     imports/*.hs
 extra-doc-files:
@@ -24,7 +24,7 @@ data-files:
 
 source-repository head
     type:     git
-    location: https://github.com/ndmitchell/simple-core.git
+    location: https://github.com/ndmitchell/core-playground.git
 
 library
     default-language: Haskell2010
@@ -55,7 +55,7 @@ executable qed
     default-language:   Haskell2010
     build-depends:
         base,
-        simple-core,
+        core-playground,
         uniplate,
         extra
     main-is:            demo/QED.hs

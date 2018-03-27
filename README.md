@@ -1,3 +1,3 @@
-# simple-core [![Hackage version](https://img.shields.io/hackage/v/simple-core.svg?label=Hackage)](https://hackage.haskell.org/package/simple-core) [![Stackage version](https://www.stackage.org/package/simple-core/badge/lts?label=Stackage)](https://www.stackage.org/package/simple-core) [![Build Status](https://img.shields.io/travis/ndmitchell/simple-core.svg)](https://travis-ci.org/ndmitchell/simple-core)
+# core-playground [![Hackage version](https://img.shields.io/hackage/v/core-playground.svg?label=Hackage)](https://hackage.haskell.org/package/core-playground) [![Stackage version](https://www.stackage.org/package/core-playground/badge/lts?label=Stackage)](https://www.stackage.org/package/core-playground) [![Build Status](https://img.shields.io/travis/ndmitchell/core-playground.svg)](https://travis-ci.org/ndmitchell/core-playground)
 
 Simple Core language for Haskell experiments.
