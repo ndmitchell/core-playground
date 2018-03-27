@@ -21,24 +21,52 @@ import Control.DeepSeq
 ---------------------------------------------------------------------
 -- TYPE
 
+-- | A variable, used to represent free variables (likely bound in the 'Module')
+--   and locally bound variables (in 'Case', 'Let', 'Lam' etc).
 newtype Var = V {fromVar :: String} deriving (Data,Typeable,Eq,Show,Ord,NFData)
+
+-- | A constructor. Note that the list constructors are by default described as
+--   @C \"[]\"@ and @C \"(:)\"@.
 newtype Con = C {fromCon :: String} deriving (Data,Typeable,Eq,Show,Ord,NFData)
 
+-- | The main expression data type which is central to the package.
+--   The 'Read' and 'Show' instances work against a subset of Haskell.
+--
+--   For operations not available directly you are encouraged to use a generics library
+--   where possible, e.g. @uniplate@.
 data Exp
-    = Var Var
-    | Con Con
-    | App Exp Exp
-    | Lam Var Exp
-    | Let Var Exp Exp -- non-recursive
-    | LetRec [(Var, Exp)] Exp
-    | Case Exp [(Pat,Exp)]
+    = -- | @variable@, a variable, either a free variable or a locally bound variable.
+      Var Var
+    | -- | @Ctor@, a constructor.
+      Con Con
+    | -- | @f x@, function application.
+      App Exp Exp
+    | -- | @\\v -> e@, lambda abstraction.
+      Lam Var Exp
+    | -- | @let v = x in y@, non-recursive let binding (so if you see @v@ in @x@, it isn't /this/ @v@).
+      Let Var Exp Exp
+    | -- | @let v = x in y@, recursive let binding, so any binding can point at any other.
+      LetRec [(Var, Exp)] Exp
+    | -- | @case x of {p1 -> e1; ...}@, case expression of flat and ordered alternatives.
+      Case Exp [(Pat,Exp)]
       deriving (Data,Typeable,Eq,Ord)
 
+-- | A pattern in a 'Case' expression'.
 data Pat
-    = PCon Con [Var]
-    | PWild
+    = -- | @C v1 ...@, a constructor followed by some number of variables.
+      --   The constructor should be fully applied to the right number of arguments.
+      PCon Con [Var]
+    | -- | @_@, a wildcard pattern which matches anything.
+      --   Usually occurs as the final alternative.
+      PWild
       deriving (Data,Typeable,Eq,Ord)
 
+
+-- | A set of bindings from function names to expressions.
+--   The bindings may be mutually recursive.
+--   The names in a module are not qualified in any way.
+--
+--   The 'Read' and 'Show' instances work against a subset of Haskell.
 newtype Module = Module {fromModule :: [(Var, Exp)]}
     deriving (Data,Typeable,Eq,Ord,NFData,Semigroup,Monoid)
 
@@ -75,13 +103,18 @@ instance Show Module where
 ---------------------------------------------------------------------
 -- FROM/TO HSE
 
+-- | Convert an expression from a @haskell-src-exts@ expression to one understood by this package.
+--   The conversion will fail if it encounters something it doesn't understand.
 fromExpHSE :: H.Exp S -> Exp
 fromExpHSE = fromExp . deflate
 
+-- | Convert from an expression to one understood by @haskell-src-exts@.
 toExpHSE :: Exp -> H.Exp H.SrcSpanInfo
 toExpHSE = inflate . toExp
 
 
+-- | Convert an expression from a @haskell-src-exts@ module to one understood by this package.
+--   The conversion will fail if it encounters something it doesn't understand.
 fromModuleHSE :: H.Module S -> Module
 fromModuleHSE (deflate -> H.Module _ _ _ _ xs) = Module $ concatMap fromDecl xs
 
@@ -129,8 +162,9 @@ fromPatVar i x = error $ "Unhandled fromPatVar: " ++ show x
 
 
 ---------------------------------------------------------------------
--- TO 
+-- TO
 
+-- | Convert from a module to one understood by @haskell-src-exts@.
 toModuleHSE :: Module -> H.Module H.SrcSpanInfo
 toModuleHSE = inflate . H.Module s Nothing [] [] . map (uncurry toDecl) . fromModule
 

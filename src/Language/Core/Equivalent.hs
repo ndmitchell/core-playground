@@ -13,6 +13,10 @@ import Language.Core.Variables
 import Language.Core.Operations
 
 
+-- | Return 'True' if two expressions are equivalent, and 'False' if either
+--   they are not equivalent or cannot be shown to be equivalent. In the absence of
+--   'LetRec', assuming no external functions have been inlined, this function
+--   is expected to be accurate.
 equivalent :: Exp -> Exp -> Bool
 equivalent x y = eval x == eval y
 
