@@ -36,7 +36,7 @@ import Control.Monad
 import qualified Language.Haskell.Exts as H
 import Data.List
 import System.Directory
-import Paths_simple_core
+import Paths_core_playground
 
 
 parseCoreFile :: FilePath -> IO Module

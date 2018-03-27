@@ -1,5 +1,5 @@
 
-module Paths_simple_core where
+module Paths_core_playground where
 
 getDataDir :: IO FilePath
 getDataDir = return "."
