@@ -13,5 +13,5 @@
 :{
 :def docs const $ return $ unlines
         [":docs_"
-        ,":!start dist/doc/html/core-playground/index.html"]
+        ,":!start dist/doc/html/core-playground/Language-Core.html"]
 :}
