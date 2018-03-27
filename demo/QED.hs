@@ -126,5 +126,5 @@ descendP (Prop vs e1 e2) = f e1 e2
         isVarCon Con{} = True
         isVarCon _ = False
 
-mkAlt (Var v) (PCon c vs) = Let v (mkApps (Con c) $ map Var vs)
+mkAlt (Var v) (PCon c vs) = subst [(v, mkApps (Con c) $ map Var vs)]
 mkAlt _ _ = id
