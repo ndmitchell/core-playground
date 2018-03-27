@@ -65,7 +65,11 @@ relabelAvoid xs x = evalState (f [] x) (fresh xs)
         g mp (PWild, x) = (,) PWild <$> f mp x
         g mp (PCon c vs, x) = do is <- replicateM (length vs) var; (,) (PCon c is) <$> f (zip vs is ++ mp) x
 
-        var = do s:ss <- get; put ss; return s
+        var = do
+            ss <- get
+            case ss of
+                [] -> error "relabelAvoid, ran out of variables"
+                x:xs -> put xs >> return x
 
 fresh :: [Var] -> [Var]
 fresh used = map V (concatMap f [1..]) \\ used
