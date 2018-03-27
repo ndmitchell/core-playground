@@ -22,8 +22,8 @@ whnfM ask = f
             a <- f a
             case a of
                 Lam v x -> do
-                    App (Lam v x) b <- return $ relabel $ App (Lam v x) b
-                    f $ subst [(v,b)] x
+                    let App (Lam v2 x2) b2 = relabel $ App (Lam v x) b
+                    f $ subst [(v2,b2)] x2
                 _ -> return $ App a b
         f (Case a b) = do
             a <- f a
