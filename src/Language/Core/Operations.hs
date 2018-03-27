@@ -21,7 +21,7 @@ fromApps (App x y) = (a, b ++ [y])
     where (a,b) = fromApps x
 fromApps x = (x,[])
 
--- Given @mkApps f [x,y,z]@ return @f x y z@. Inverse of 'fromApps'
+-- | Given @mkApps f [x,y,z]@ return @f x y z@. Inverse of 'fromApps'
 mkApps :: Exp -> [Exp] -> Exp
 mkApps = foldl App
 
