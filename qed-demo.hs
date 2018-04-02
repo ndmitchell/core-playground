@@ -14,8 +14,17 @@ proof3 f' = (($) . f') === eta2 f'
 
 proof4 n x = take n (repeat x) === replicate n x
 
+drop' n xs = case compare n 0 of
+    LT -> undefined
+    EQ -> xs
+    GT -> case xs of
+                     [] -> []
+                     x:xs -> drop' (n-1) xs
+
 -- These aren't the same unless n is positive, as n=(-1) x=[1] is 1 vs _|_
--- proof5 n x = head (drop n x) === x !! n
+-- proof5 n x = (if n < 0 then undefined else head (drop' n x)) === (if n < 0 then undefined else x !! n)
+-- need to prove by keeping a store of which primitives have evaluated how
+--
 
 proof6 f z g x = foldr f z (map g x) === foldr (f . g) z x
 
@@ -35,6 +44,9 @@ proof13 f x y = map (uncurry f) (zip x y) === zipWith f x y
 
 -- Results in non-termination trying to prove iterate (id*) = repeat, for increasingly more id's
 -- proof14 = iterate id === repeat
+-- forall a. iterate id (id (id a))  ===  repeat a
+-- Could be fixed by inling all id first, inlining the id when it arises,
+-- or using the lemma id (id x) = id x
 
 -- We can solve the simpler version though
 proof14a = iterate (\x -> x) === repeat
@@ -47,5 +59,36 @@ proof16 = concatMap maybeToList === catMaybes
 
 proof17 f g x = concatMap f (map g x) === concatMap (f . g) x
 
--- Results in non-termination because you are building up progressively bigger (:) accumulator
--- proof18 x = head (reverse x) === last x
+reverse2 xs = rev [] xs
+
+reverse3          =  foldl (\x y -> y:x) []
+
+
+rev acc xs = case xs of
+    [] -> acc
+    x:xs -> rev (x:acc) xs
+
+-- Results in non-termination because you are building up progressively bigger flip (:) accumulator
+-- proof18a x xs y = head (rev y (x:xs)) === last (x:xs)
+--proof18 x = head (reverse2 x) === last x
+-- need to make the generalisation argument (which can be done by hand)
+-- then need to be able to see that something is an instance of it
+
+plus a b = case a of
+    Z -> b
+    S a -> S (plus a b)
+
+fibExp x = case x of
+    Z -> Z
+    S x -> case x of
+        Z -> S Z
+        S n -> fibExp (S n) `plus` fibExp n
+
+fibLin' x a b = case x of
+    Z -> b
+    S n -> fibLin' n (a `plus` b) a
+
+fibLin :: Nat -> Nat
+fibLin n = fibLin' n (S Z) Z
+
+-- proofFib d u = fibLin' d (fibExp (S u)) (fibExp u) === fibExp (d + u)
