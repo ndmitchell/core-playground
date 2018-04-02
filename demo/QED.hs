@@ -22,18 +22,13 @@ main = do
         let (check, rest) = partition (isPrefixOf "proof" . fromVar . fst) $ fromModule $ simpler $ qed <> base
         mapM_ (prove (Module rest) . toProp . snd) check
 
-
 -- | Reduce the language we have to deal with, without changing semantics
 simpler :: Module -> Module
-simpler = descendBi (simplify . transform f . simplifyAlts ds)
-    where
-        f (Let a b x) = subst [(a,b)] x
-        f x = x
-
-        ds = [[(C "Nothing",0),(C "Just",1)]
-             ,[(C "[]",0),(C "(:)",2)]
-             ,[(C "LT",0),(C "EQ",0),(C "GT",0)]
-             ]
+simpler = descendBi $ simplifyNoLet . simplifyAlts
+    [[(C "Nothing",0),(C "Just",1)]
+    ,[(C "[]",0),(C ":",2)]
+    ,[(C "LT",0),(C "EQ",0),(C "GT",0)]
+    ]
 
 
 data Prop = Prop [Var] Exp Exp
@@ -74,12 +69,24 @@ prove m p = do
                         fail "FAILED TO PROVE"
 
 
+simplifyNoLet :: Exp -> Exp
+simplifyNoLet = g . f . simplify
+    where
+        g (Case o@(Var (V "bottom")) _) = o
+        g x = x
+
+        f x | null [x | Let{} <- universe x] = x
+            | otherwise = f $ simplify $ transformBi unlet x
+
+        unlet (Let v x y) = subst [(v,x)] y
+        unlet x = x
+
 simpP :: Prop -> Prop
 simpP = label . short . simp
     where
         -- run the simplifier
         simp (Prop vs x y) = Prop vs (f x) (f y)
-            where f x = relabelAvoid (vs ++ free x) $ simplify x
+            where f x = relabelAvoid (vs ++ free x) $ simplifyNoLet x
 
         -- remove any quantifiers that don't matter, put them in a good order
         short (Prop vs x y) = Prop vs2 x y
@@ -126,5 +133,5 @@ descendP (Prop vs e1 e2) = f e1 e2
         isVarCon Con{} = True
         isVarCon _ = False
 
-mkAlt (Var v) (PCon c vs) = subst [(v, mkApps (Con c) $ map Var vs)]
+mkAlt (Var v) (PCon c vs) = Let v (mkApps (Con c) $ map Var vs)
 mkAlt _ _ = id
