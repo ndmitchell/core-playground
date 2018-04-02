@@ -8,4 +8,4 @@ env:
 script:
 - export HLINT_ARGUMENTS=src demo
 - curl -sL https://raw.github.com/ndmitchell/neil/master/travis.sh | sh
-- qed qed-demo.hs
+- $HOME/.cabal/bin/qed qed-demo.hs
