@@ -31,11 +31,11 @@ module Prelude (
               isInfinite, isDenormalized, isIEEE, isNegativeZero, atan2),
     Monad((>>=), (>>), return, fail),
     Functor(fmap),
-    mapM, mapM_, sequence, sequence_, (=<<), 
+    mapM, mapM_, sequence, sequence_, (=<<),
     maybe, either,
     (&&), (||), not, otherwise,
-    subtract, even, odd, gcd, lcm, (^), (^^), 
-    fromIntegral, realToFrac, 
+    subtract, even, odd, gcd, lcm, (^), (^^),
+    fromIntegral, realToFrac,
     fst, snd, curry, uncurry, id, const, (.), flip, ($), until,
     asTypeOf, error, undefined,
     seq, ($!)
@@ -120,7 +120,7 @@ class  Enum a  where
     enumFrom x       =  map toEnum [fromEnum x ..]
     enumFromTo x y   =  map toEnum [fromEnum x .. fromEnum y]
     enumFromThen x y =  map toEnum [fromEnum x, fromEnum y ..]
-    enumFromThenTo x y z = 
+    enumFromThenTo x y z =
                         map toEnum [fromEnum x, fromEnum y .. fromEnum z]
 
 
@@ -148,7 +148,7 @@ class  (Num a, Ord a) => Real a  where
 
 
 class  (Real a, Enum a) => Integral a  where
-    quot, rem        :: a -> a -> a   
+    quot, rem        :: a -> a -> a
     div, mod         :: a -> a -> a
     quotRem, divMod  :: a -> a -> (a,a)
     toInteger        :: a -> Integer
@@ -205,7 +205,7 @@ class  (Real a, Fractional a) => RealFrac a  where
         -- Minimal complete definition:
         --      properFraction
     truncate x       =  fst $ properFraction x
-    
+
 
 class  (RealFrac a, Floating a) => RealFloat a  where
     floatRadix       :: a -> Integer
@@ -221,7 +221,7 @@ class  (RealFrac a, Floating a) => RealFloat a  where
     atan2            :: a -> a -> a
 
         -- Minimal complete definition:
-        --      All except exponent, significand, 
+        --      All except exponent, significand,
         --                 scaleFloat, atan2
 -- Numeric functions
 
@@ -263,11 +263,11 @@ class  Monad m  where
     fail s  = error s
 
 
-sequence       :: Monad m => [m a] -> m [a] 
+sequence       :: Monad m => [m a] -> m [a]
 sequence       =  foldr (\p q -> p >>= \x -> q >>= \y -> return (x:y)) (return [])
 
 
-sequence_      :: Monad m => [m a] -> m () 
+sequence_      :: Monad m => [m a] -> m ()
 sequence_      =  foldr (>>) (return ())
 
 -- The xxxM functions take list arguments, but lift the function or
@@ -317,7 +317,7 @@ flip f x y       =  f y x
 seq :: a -> b -> b
 seq = primSeq
 
--- right-associating infix application operators 
+-- right-associating infix application operators
 -- (useful in continuation-passing style)
 
 ($), ($!) :: (a -> b) -> a -> b
@@ -390,7 +390,7 @@ instance  Functor Maybe  where
     fmap f mx = case mx of
         Nothing    ->  Nothing
         Just x -> Just (f x)
-        
+
 
 instance  Monad Maybe  where
     mx >>= k = case mx of
@@ -435,26 +435,26 @@ data  Ordering  =  LT | EQ | GT
 -- far too large.
 
 
-data  Int 
+data  Int
 
-instance  Eq       Int  where 
+instance  Eq       Int  where
 
-instance  Ord      Int  where 
+instance  Ord      Int  where
 
-instance  Num      Int  where 
+instance  Num      Int  where
 
-instance  Real     Int  where 
+instance  Real     Int  where
 
-instance  Integral Int  where 
+instance  Integral Int  where
 
-instance  Enum     Int  where 
+instance  Enum     Int  where
 
-instance  Bounded  Int  where 
+instance  Bounded  Int  where
 
 
-data  Integer  
+data  Integer
 
-instance  Eq       Integer  where 
+instance  Eq       Integer  where
 
 instance  Ord      Integer  where
 
@@ -610,11 +610,11 @@ asTypeOf         =  const
 
 
 error            :: String -> a
-error        x    =  primError -- deliberately don't pass x to error, so different errors are considered equal
+error        x    =  bottom -- deliberately don't pass x to error, so different errors are considered equal
 
 -- It is expected that compilers will recognize this and insert error
--- messages that are more appropriate to the context in which undefined 
--- appears. 
+-- messages that are more appropriate to the context in which undefined
+-- appears.
 
 
 undefined        :: a
@@ -817,7 +817,7 @@ splitAt n xs             =  (take n xs, drop n xs)
 
 -- takeWhile, applied to a predicate p and a list xs, returns the longest
 -- prefix (possibly empty) of xs of elements that satisfy p.  dropWhile p xs
--- returns the remaining suffix.  span p xs is equivalent to 
+-- returns the remaining suffix.  span p xs is equivalent to
 -- (takeWhile p xs, dropWhile p xs), while break p uses the negation of p.
 
 
@@ -913,7 +913,7 @@ lookup key xs = case xs of
 -- sum and product compute the sum or product of a finite list of numbers.
 
 sum, product     :: (Num a) => [a] -> a
-sum              =  foldl (+) 0  
+sum              =  foldl (+) 0
 product          =  foldl (*) 1
 
 -- maximum and minimum return the maximum or minimum value from a list,
@@ -966,7 +966,7 @@ zipWith3 z as bs cs = case as of
             c:cs -> z a b c : zipWith3 z as bs cs
 
 
--- unzip transforms a list of pairs into a pair of lists.  
+-- unzip transforms a list of pairs into a pair of lists.
 
 
 unzip            :: [(a,b)] -> ([a],[b])
@@ -994,7 +994,7 @@ class  Read a  where
 
 class  Show a  where
     showsPrec        :: Int -> a -> ShowS
-    show             :: a -> String 
+    show             :: a -> String
     showList         :: [a] -> ShowS
 
 reads            :: (Read a) => ReadS a
@@ -1044,9 +1044,9 @@ instance  Read Integer  where
     readsPrec p         = readSigned readDec
 
 
-instance  Show Float  where 
+instance  Show Float  where
     showsPrec p         = showFloat
-           
+
 
 instance  Read Float  where
     readsPrec p         = readSigned readFloat
@@ -1072,7 +1072,7 @@ instance Read () where
 -}
 
 instance  Show Char  where
-    showsPrec p c = 
+    showsPrec p c =
         if c == '\'' then showString "'\\''"
                      else showChar '\'' . showLitChar c . showChar '\''
 
@@ -1135,44 +1135,44 @@ instance  Show IOError  where
 instance  Eq IOError  where
 
 
-ioError    ::  IOError -> IO a 
+ioError    ::  IOError -> IO a
 ioError    =   primIOError
-   
+
 
 userError  ::  String -> IOError
 userError  =   primUserError
-   
 
-catch      ::  IO a -> (IOError -> IO a) -> IO a 
+
+catch      ::  IO a -> (IOError -> IO a) -> IO a
 catch      =   primCatch
-   
+
 
 putChar    :: Char -> IO ()
 putChar    =  primPutChar
-   
+
 
 putStr     :: String -> IO ()
 putStr s   =  mapM_ putChar s
-   
+
 
 putStrLn   :: String -> IO ()
 putStrLn s =   putStr s >> putStr "\n"
-   
+
 
 print      :: Show a => a -> IO ()
 print x    =  putStrLn (show x)
-   
+
 
 getChar    :: IO Char
 getChar    =  primGetChar
-   
+
 
 getLine    :: IO String
-getLine    =  getChar >>= \c -> 
-                 if c == '\n' then return "" else 
-                    getLine >>= \s -> 
+getLine    =  getChar >>= \c ->
+                 if c == '\n' then return "" else
+                    getLine >>= \s ->
                        return (c:s)
-            
+
 
 getContents :: IO String
 getContents =  primGetContents
@@ -1188,11 +1188,11 @@ interact f  =  hSetBuffering stdin  NoBuffering >>
 
 readFile   :: FilePath -> IO String
 readFile   =  primReadFile
-   
+
 
 writeFile  :: FilePath -> String -> IO ()
 writeFile  =  primWriteFile
-   
+
 
 appendFile :: FilePath -> String -> IO ()
 appendFile =  primAppendFile
