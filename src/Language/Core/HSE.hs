@@ -33,7 +33,7 @@ deflate = transformBi deflateExp . transformBi deflatePat . transformBi deflateQ
 
 spec :: SpecialCon S -> QName S
 spec UnitCon{} = UnQual s $ Ident s "()"
-spec ListCon{} = UnQual s $ Ident s "[]" 
+spec ListCon{} = UnQual s $ Ident s "[]"
 spec Cons{} = UnQual s $ Symbol s ":"
 spec (TupleCon _ Boxed i) = UnQual s $ Ident s $ "(" ++ replicate (i-1) ',' ++ ")"
 spec x = Special s x
