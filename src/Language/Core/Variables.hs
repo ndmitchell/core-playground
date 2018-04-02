@@ -14,12 +14,16 @@ import Data.Generics.Uniplate.Data
 import Language.Core.Type
 
 
+-- | Get all the variables mentioned in an 'Exp', including inside 'Pat'.
 vars :: Exp -> [Var]
 vars = universeBi
 
+-- | Get all the variables mentioned in a 'Pat'.
 varsP :: Pat -> [Var]
 varsP = universeBi
 
+-- | Find all the free variables of an expression - those whose value in the surrounding
+--   scope is used.
 free :: Exp -> [Var]
 free (Var x) = [x]
 free (Con _) = []
@@ -30,6 +34,9 @@ free (Let a b y) = nub $ free b ++ delete a (free y)
 free (LetRec xs y) = nub $ concatMap free (y:map snd xs) \\ map fst xs
 
 
+-- | Perform a substitution of the given variables for expressions. Note that
+--   if any of the substitution expressions have free variables that are bound
+--   locally in the target expression it will go wrong.
 subst :: [(Var,Exp)] -> Exp -> Exp
 subst [] x = x
 subst ren e = case e of
@@ -43,9 +50,14 @@ subst ren e = case e of
     where f del = subst (filter (flip notElem del . fst) ren)
 
 
+-- | Relabel an expression so each bound variable occurs once and no variables overlap with
+--   free variables from the initial expression.
 relabel :: Exp -> Exp
 relabel x = relabelAvoid (free x) x
 
+-- | Relabel given a set of variables to avoid, typically the 'free' variables.
+--   If you want exactly the 'free' variables use 'relabel' - typically used when you also want
+--   to exclude some additional set of variables as well.
 relabelAvoid :: [Var] -> Exp -> Exp
 relabelAvoid xs x = evalState (f [] x) (fresh xs)
     where
@@ -71,6 +83,7 @@ relabelAvoid xs x = evalState (f [] x) (fresh xs)
                 [] -> error "relabelAvoid, ran out of variables"
                 x:xs -> put xs >> return x
 
+-- | Create an infinite list of fresh variables given a list of variables to exclude.
 fresh :: [Var] -> [Var]
 fresh used = map V (concatMap f [1..]) \\ used
     where f 1 = map return ['a'..'z']

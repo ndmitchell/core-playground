@@ -24,6 +24,12 @@ caseCon o@(Case (fromApps -> (Con c, xs)) alts) = Just $ head $ mapMaybe f alts 
 caseCon _ = Nothing
 
 
+-- | Simplify an expression, performing operations such as removing unused lets,
+--   turning let-rec into let, inlining cheap or linear lets, reducing application
+--   to a lambda, case/case transform etc. A subset of the GHC simplifier.
+--
+--   Terminating, equivalent (passes 'equivalent'), does a 'relabel' first,
+--   idempotent (ignoring relabelling), same cost (for any sensible cost-model).
 simplify :: Exp -> Exp
 simplify = debugAssertEq equivalent (fs . relabel)
     where
@@ -62,6 +68,13 @@ count v (App x y) = count v x + count v y
 count v _ = 0
 
 
+-- | Simplify case alternatives. Given a list of data types, each of which has a list of
+--   constructors and their arity, sort the alternatives into constructor order and expand out
+--   any 'PWild' patterns. May duplicate expressions if 'PWild' covers multiple constructors.
+--
+--   As an example:
+--
+-- > simplifyAlts [[("[]",0),(":",2)]]
 simplifyAlts :: [[(Con, Int)]] -> Exp -> Exp
 simplifyAlts ds = transform f
     where
