@@ -16,6 +16,7 @@ import qualified Language.Haskell.Exts as H
 import Language.Core.HSE
 import Data.Semigroup
 import Control.DeepSeq
+import Prelude
 
 
 ---------------------------------------------------------------------
