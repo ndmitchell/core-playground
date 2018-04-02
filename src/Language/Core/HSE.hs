@@ -146,6 +146,7 @@ inflatePat :: Pat S -> Pat S
 inflatePat (PParen _ (PParen _ x)) = PParen s x
 inflatePat (PParen _ (PVar _ x)) = PVar s x
 inflatePat (PApp _ (UnQual _ (Symbol _ "[]")) []) = PList s []
+inflatePat (PApp _ x@(UnQual _ Symbol{}) [a,b]) = PInfixApp s a x b
 inflatePat x = x
 
 inflateRhs :: Rhs S -> Rhs S
