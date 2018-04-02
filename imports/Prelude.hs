@@ -696,7 +696,7 @@ length xs = case xs of
 
 (!!)                :: [a] -> Int -> a
 (!!) xs n = if n < 0 then error "Prelude.!!: negative index"
-       else case x of
+       else case xs of
                 [] -> error "Prelude.!!: index too large"
                 x:xs -> if n == 0 then x else xs !! (n-1)
 
