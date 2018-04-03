@@ -8,6 +8,7 @@ import Control.Monad.Extra
 import Data.Monoid
 import Data.Generics.Uniplate.Data
 import System.Environment
+import Prelude
 
 
 main :: IO ()
